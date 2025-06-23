@@ -37,11 +37,11 @@ export default /* glsl */ `
 
           float border = smoothstep(0.1, 0.6, vUv.x);
 
-          // Add lighter sides: blend in a light color based on distance from center
-          float sideLight = smoothstep(0.0, 0.3, vUv.x) + smoothstep(1.0, 0.7, vUv.x);
+          // Add much lighter sides: strong blend with pure white, wide area
+          float sideLight = smoothstep(0.0, 0.45, vUv.x) + smoothstep(1.0, 0.55, vUv.x);
           sideLight = clamp(sideLight, 0.0, 1.0);
-          vec3 lightColor = vec3(0.8, 0.8, 1.0); // light bluish white
-          color = mix(color, lightColor, 0.5 * sideLight);
+          vec3 lightColor = vec3(1.0, 1.0, 1.0); // pure white
+          color = mix(color, lightColor, 0.85 * sideLight);
 
           color = mix(color, bgMain, 1. -border);
 
