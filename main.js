@@ -1,86 +1,83 @@
-import * as THREE from "https://cdn.skypack.dev/three@0.122.0";
+import * as THREE from "https://cdn.skypack.dev/three@v0.122.0";
+import sNoise from "https://cdn.jsdelivr.net/gh/Cardajir/samadhi/snoise.js";
 import vertexShader from "https://cdn.jsdelivr.net/gh/Cardajir/samadhi/vertexShader.js";
 import fragmentShader from "https://cdn.jsdelivr.net/gh/Cardajir/samadhi/fragmentShader.js";
 
-console.log("Hello World");
-
-const renderer = new THREE.WebGLRenderer();
-const canvasContainer = document.querySelector('.page_canvas');
-if (canvasContainer) {
-  renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight, false);
-  canvasContainer.appendChild(renderer.domElement);
-} else {
-  console.error('No .page_canvas element found!');
+function randomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const scene = new THREE.Scene();
-const camera = new THREE.OrthographicCamera(
-  -innerWidth / 2,
-  innerWidth / 2,
-  innerHeight / 2,
-  -innerHeight / 2,
-  -100,
-  100
-);
-camera.position.z = 5;
-
-const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight, 100, 100);
-const material = new THREE.ShaderMaterial({
-  uniforms: {
-    u_time: { value: 0.0 },
-    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-    u_randomisePosition: { value: new THREE.Vector2(1, 2) },
-  },
-  vertexShader,
-  fragmentShader,
-});
-const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
-
-function onWindowResize() {
-  if (!canvasContainer) return;
-  const width = canvasContainer.clientWidth;
-  const height = canvasContainer.clientHeight;
-
-  renderer.setSize(width, height, false);
-
-  camera.left = -width / 2;
-  camera.right = width / 2;
-  camera.top = height / 2;
-  camera.bottom = -height / 2;
-  camera.updateProjectionMatrix();
-
-  mesh.geometry = new THREE.PlaneGeometry(width, height, 100, 100);
-  material.uniforms.u_resolution.value.set(width, height);
+function rgb(r, g, b) {
+  return new THREE.Vector3(r, g, b);
 }
+document.addEventListener("DOMContentLoaded", function (e) {
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
-window.addEventListener('resize', onWindowResize);
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(
+    -innerWidth / 2,
+    innerWidth / 2,
+    innerHeight / 2,
+    -innerHeight / 2,
+    -100,
+    100
+  );
 
-let animationFrameId;
-function animate(time) {
-  animationFrameId = requestAnimationFrame(animate);
-  material.uniforms.u_time.value = time * 0.001;
-  // Ensure resolution is always up to date (in case of dynamic resizes)
-  if (canvasContainer) {
-    material.uniforms.u_resolution.value.set(canvasContainer.clientWidth, canvasContainer.clientHeight);
-  }
+  camera.position.z = 5;
+
+  var randomisePosition = new THREE.Vector2(1, 2);
+
+  let geometry = new THREE.PlaneGeometry(
+    window.innerWidth,
+    window.innerHeight,
+    100,
+    100
+  );
+  let material = new THREE.ShaderMaterial({
+    uniforms: {
+      // Adjusted colors to match BG.jpg
+      u_bg: { type: "v3", value: rgb(10, 10, 20) }, // Darker blue/black
+      u_bgMain: { type: "v3", value: rgb(30, 30, 60) }, // Slightly lighter dark blue
+      u_color1: { type: "v3", value: rgb(0, 0, 10) }, // Even darker
+      u_color2: { type: "v3", value: rgb(50, 50, 90) }, // Muted dark blue
+      u_time: { type: "f", value: 30 },
+      u_randomisePosition: { type: "v2", value: randomisePosition },
+    },
+    fragmentShader: sNoise + fragmentShader,
+    vertexShader: sNoise + vertexShader,
+  });
+
+  let mesh = new THREE.Mesh(geometry, material);
+  mesh.scale.multiplyScalar(2);
+  mesh.rotationX = 0.0;
+  mesh.rotationY = 0.0;
+  mesh.rotationZ = 0.0;
+  scene.add(mesh);
+
   renderer.render(scene, camera);
-}
+  let t = 0;
+  let j = 0;
+  const animate = function () {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    mesh.material.uniforms.u_randomisePosition.value = new THREE.Vector2(
+      j,
+      Math.sin(j)
+    );
+    mesh.material.uniforms.u_time.value = t;
 
-try {
+    j = j + 0.02;
+    t = t + 0.05;
+  };
   animate();
-} catch (error) {
-  console.error('Animation error:', error);
-  cancelAnimationFrame(animationFrameId);
-}
-
-function cleanup() {
-  cancelAnimationFrame(animationFrameId);
-  window.removeEventListener('resize', onWindowResize);
-  renderer.dispose();
-  geometry.dispose();
-  material.dispose();
-}
+  window.addEventListener("resize", function (e) {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+});
 
 // Function to handle scroll
 function handleScroll() {
