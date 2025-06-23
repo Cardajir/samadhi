@@ -28,6 +28,7 @@ const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight, 
 const material = new THREE.ShaderMaterial({
   uniforms: {
     u_time: { value: 0.0 },
+    u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     u_randomisePosition: { value: new THREE.Vector2(1, 2) },
   },
   vertexShader,
@@ -50,6 +51,7 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   mesh.geometry = new THREE.PlaneGeometry(width, height, 100, 100);
+  material.uniforms.u_resolution.value.set(width, height);
 }
 
 window.addEventListener('resize', onWindowResize);
@@ -58,6 +60,10 @@ let animationFrameId;
 function animate(time) {
   animationFrameId = requestAnimationFrame(animate);
   material.uniforms.u_time.value = time * 0.001;
+  // Ensure resolution is always up to date (in case of dynamic resizes)
+  if (canvasContainer) {
+    material.uniforms.u_resolution.value.set(canvasContainer.clientWidth, canvasContainer.clientHeight);
+  }
   renderer.render(scene, camera);
 }
 
@@ -108,5 +114,8 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener('unload', cleanup);
+
+
+
 
 
