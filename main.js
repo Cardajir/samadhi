@@ -13,7 +13,13 @@ function rgb(r, g, b) {
 document.addEventListener("DOMContentLoaded", function (e) {
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  const pageCanvasDiv = document.querySelector('.page_canvas');
+  if (pageCanvasDiv) {
+    pageCanvasDiv.appendChild(renderer.domElement);
+  } else {
+    console.warn('No .page_canvas div found! Rendering to body.');
+    document.body.appendChild(renderer.domElement);
+  }
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
@@ -119,6 +125,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener('unload', cleanup);
+
+
+
+
+
 
 
 
