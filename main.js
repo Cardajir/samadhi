@@ -1,6 +1,6 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.122.0";
-import vertexShader from "https://github.com/Cardajir/samadhi/blob/main/vertexShader.js";
-import fragmentShader from "https://github.com/Cardajir/samadhi/blob/main/fragmentShader.js";
+import vertexShader from "https://cdn.jsdelivr.net/gh/Cardajir/samadhi/vertexShader.js";
+import fragmentShader from "https://cdn.jsdelivr.net/gh/Cardajir/samadhi/fragmentShader.js";
 
 console.log("Hello World");
 
