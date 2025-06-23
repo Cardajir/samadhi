@@ -1,43 +1,42 @@
 export default /* glsl */ `
 
-uniform float u_time;
-uniform vec2 u_resolution;
-varying vec2 vUv;
+      vec3 rgb(float r, float g, float b) {
+          return vec3(r / 255., g / 255., b / 255.);
+      }
 
-float random(vec2 st) {
-  return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
-}
+      vec3 rgb(float c) {
+          return vec3(c / 255., c / 255., c / 255.);
+      }
 
-void main() {
-    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    uv = uv * 2.0 - 1.0; // Center UVs
+      uniform vec3 u_bg;
+      uniform vec3 u_bgMain;
+      uniform vec3 u_color1;
+      uniform vec3 u_color2;
+      uniform float u_time;
 
-    // Background color (deep blue/black)
-    vec3 color = vec3(0.05, 0.05, 0.15);
+      varying vec2 vUv;
+      varying float vDistortion;
 
-    // Add several blurred blobs
-    float t = u_time * 0.1;
-    float glow = 0.0;
+      void main() {
+          vec3 bg = rgb(u_bg.r, u_bg.g, u_bg.b);
+          vec3 c1 = rgb(u_color1.r, u_color1.g, u_color1.b);
+          vec3 c2 = rgb(u_color2.r, u_color2.g, u_color2.b);
+          vec3 bgMain = rgb(u_bgMain.r, u_bgMain.g, u_bgMain.b);
 
-    // Blob 1
-    vec2 pos1 = vec2(sin(t) * 0.4, cos(t) * 0.5);
-    glow += 0.3 / (length(uv - pos1) * 8.0 + 0.2);
+          float noise1 = snoise(vUv + u_time * 0.001);
+          float noise2 = snoise(vUv * 2. + u_time * 0.001);
 
-    // Blob 2
-    vec2 pos2 = vec2(-0.5 + cos(t * 1.3) * 0.3, 0.5 + sin(t * 1.1) * 0.2);
-    glow += 0.2 / (length(uv - pos2) * 7.0 + 0.2);
+          vec3 color = bg;
+          color = mix(color, c1, noise1 * 0.6);
+          color = mix(color, c2, noise2 * .4);
 
-    // Blob 3
-    vec2 pos3 = vec2(0.5 + sin(t * 0.7) * 0.2, -0.5 + cos(t * 0.9) * 0.3);
-    glow += 0.25 / (length(uv - pos3) * 9.0 + 0.2);
+          color = mix(color, mix(c1, c2, vUv.x), vDistortion);
 
-    // Blob 4
-    vec2 pos4 = vec2(-0.3, -0.7 + sin(t * 0.5) * 0.2);
-    glow += 0.15 / (length(uv - pos4) * 6.0 + 0.2);
+          float border = smoothstep(0.1, 0.6, vUv.x);
 
-    // Colorize the glow (purple/blue)
-    color += glow * vec3(0.2, 0.1, 0.5);
+          color = mix(color, bgMain, 1. -border);
 
-    gl_FragColor = vec4(color, 1.0);
-}
-`;
+          gl_FragColor = vec4(color, 1.0);
+      }
+    
+    `;
