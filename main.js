@@ -12,8 +12,16 @@ function rgb(r, g, b) {
 }
 document.addEventListener("DOMContentLoaded", function (e) {
   const renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
   const pageCanvasDiv = document.querySelector('.page_canvas');
+  function getCanvasSize() {
+    if (pageCanvasDiv) {
+      return [pageCanvasDiv.clientWidth, pageCanvasDiv.clientHeight];
+    } else {
+      return [window.innerWidth, window.innerHeight];
+    }
+  }
+  let [canvasWidth, canvasHeight] = getCanvasSize();
+  renderer.setSize(canvasWidth, canvasHeight);
   if (pageCanvasDiv) {
     pageCanvasDiv.appendChild(renderer.domElement);
   } else {
@@ -23,10 +31,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
-    -innerWidth / 2,
-    innerWidth / 2,
-    innerHeight / 2,
-    -innerHeight / 2,
+    -canvasWidth / 2,
+    canvasWidth / 2,
+    canvasHeight / 2,
+    -canvasHeight / 2,
     -100,
     100
   );
@@ -36,8 +44,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
   var randomisePosition = new THREE.Vector2(1, 2);
 
   let geometry = new THREE.PlaneGeometry(
-    window.innerWidth,
-    window.innerHeight,
+    canvasWidth,
+    canvasHeight,
     100,
     100
   );
@@ -86,11 +94,31 @@ document.addEventListener("DOMContentLoaded", function (e) {
     noiseSeed += 0.008;
   };
   animate();
-  window.addEventListener("resize", function (e) {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
+
+  function resizeCanvasToDiv() {
+    let [newWidth, newHeight] = getCanvasSize();
+    renderer.setSize(newWidth, newHeight);
+    camera.left = -newWidth / 2;
+    camera.right = newWidth / 2;
+    camera.top = newHeight / 2;
+    camera.bottom = -newHeight / 2;
     camera.updateProjectionMatrix();
-  });
+    // Replace geometry with new size
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.PlaneGeometry(newWidth, newHeight, 100, 100);
+  }
+
+  // Listen for window resize and also poll for div size changes
+  window.addEventListener("resize", resizeCanvasToDiv);
+  // Optional: Poll for div size changes (for dynamic layouts)
+  let lastDivSize = [canvasWidth, canvasHeight];
+  setInterval(() => {
+    let [w, h] = getCanvasSize();
+    if (w !== lastDivSize[0] || h !== lastDivSize[1]) {
+      lastDivSize = [w, h];
+      resizeCanvasToDiv();
+    }
+  }, 300);
 });
 
 // Function to handle scroll
@@ -125,6 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener('unload', cleanup);
+
 
 
 
