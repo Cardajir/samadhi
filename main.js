@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
       u_color2: { type: "v3", value: rgb(50, 50, 90) }, // Muted dark blue
       u_time: { type: "f", value: 30 },
       u_randomisePosition: { type: "v2", value: randomisePosition },
+      u_colorShift: { type: "f", value: 0 },
+      u_noiseSeed: { type: "f", value: 0 },
     },
     fragmentShader: sNoise + fragmentShader,
     vertexShader: sNoise + vertexShader,
@@ -59,6 +61,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
   renderer.render(scene, camera);
   let t = 0;
   let j = 0;
+  let colorShift = 0;
+  let noiseSeed = 0;
   const animate = function () {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
@@ -67,9 +71,13 @@ document.addEventListener("DOMContentLoaded", function (e) {
       Math.sin(j)
     );
     mesh.material.uniforms.u_time.value = t;
+    mesh.material.uniforms.u_colorShift.value = colorShift;
+    mesh.material.uniforms.u_noiseSeed.value = noiseSeed;
 
     j = j + 0.02;
     t = t + 0.05;
+    colorShift += 0.01;
+    noiseSeed += 0.008;
   };
   animate();
   window.addEventListener("resize", function (e) {
@@ -111,6 +119,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener('unload', cleanup);
+
+
+
+
+
 
 
 
