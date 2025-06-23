@@ -13,6 +13,8 @@ export default /* glsl */ `
       uniform vec3 u_color1;
       uniform vec3 u_color2;
       uniform float u_time;
+      uniform float u_colorShift;
+      uniform float u_noiseSeed;
 
       varying vec2 vUv;
       varying float vDistortion;
@@ -23,12 +25,13 @@ export default /* glsl */ `
           vec3 c2 = rgb(u_color2.r, u_color2.g, u_color2.b);
           vec3 bgMain = rgb(u_bgMain.r, u_bgMain.g, u_bgMain.b);
 
-          float noise1 = snoise(vUv + u_time * 0.001);
-          float noise2 = snoise(vUv * 2. + u_time * 0.001);
+          float noise1 = snoise(vUv + u_time * 0.001 + u_noiseSeed);
+          float noise2 = snoise(vUv * 2. + u_time * 0.001 - u_noiseSeed);
 
+          float colorMod = 0.5 + 0.5 * sin(u_colorShift + vUv.x * 6.2831);
           vec3 color = bg;
-          color = mix(color, c1, noise1 * 0.6);
-          color = mix(color, c2, noise2 * .4);
+          color = mix(color, c1, noise1 * 0.6 * colorMod);
+          color = mix(color, c2, noise2 * .4 * (1.0 - colorMod));
 
           color = mix(color, mix(c1, c2, vUv.x), vDistortion);
 
