@@ -52,10 +52,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
   let material = new THREE.ShaderMaterial({
     uniforms: {
       // Adjusted colors to match BG.jpg
-      u_bg: { type: "v3", value: rgb(10, 10, 20) }, // Darker blue/black
-      u_bgMain: { type: "v3", value: rgb(30, 30, 60) }, // Slightly lighter dark blue
-      u_color1: { type: "v3", value: rgb(0, 0, 10) }, // Even darker
-      u_color2: { type: "v3", value: rgb(50, 50, 90) }, // Muted dark blue
+      u_bg: { type: "v3", value: rgb(5, 4, 10) }, // A very dark blue, almost black
+      u_bgMain: { type: "v3", value: rgb(0, 0, 0) }, // To create darker areas
+      u_color1: { type: "v3", value: rgb(8, 8, 20) }, // Dark blue for the haze
+      u_color2: { type: "v3", value: rgb(15, 15, 30) }, // A slightly lighter blue for variety in the haze.
       u_time: { type: "f", value: 30 },
       u_randomisePosition: { type: "v2", value: randomisePosition },
       u_colorShift: { type: "f", value: 0 },
