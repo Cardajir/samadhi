@@ -152,8 +152,6 @@ document.addEventListener("DOMContentLoaded", function() {
   handleScroll();
 });
 
-window.addEventListener('unload', cleanup);
-
 
 
 
