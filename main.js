@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
   }, 300);
 });
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
   const smoother = ScrollSmoother.create({
     wrapper: ".smooth-wrapper",
     content: ".page_wrap",
@@ -155,58 +155,66 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
     });
   }
 
-  // SplitText: header & idea
-  const headerWords = new SplitText(".good_idea_header", { type: "words" }).words;
-  const ideaWords = new SplitText(".good_idea", { type: "words" }).words;
+  // SplitText: header & idea animace až po načtení fontů
+  function splitTextAndAnimate() {
+    const headerWords = new SplitText(".good_idea_header", { type: "words" }).words;
+    const ideaWords = new SplitText(".good_idea", { type: "words" }).words;
 
-  // Počáteční stav
-  gsap.set(headerWords, { y: 100, opacity: 0 });
-  gsap.set(ideaWords, { y: 100, opacity: 0 });
-  gsap.set(".section_header_underline", { y: 100, opacity: 0 });
-  gsap.set(".good_idea_para", { opacity: 0, filter: "blur(10px)" });
+    // Počáteční stav
+    gsap.set(headerWords, { y: 100, opacity: 0 });
+    gsap.set(ideaWords, { y: 100, opacity: 0 });
+    gsap.set(".section_header_underline", { y: 100, opacity: 0 });
+    gsap.set(".good_idea_para", { opacity: 0, filter: "blur(10px)" });
 
-  // Scroll-triggerovaná timeline
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".section_wrap.gi",
-      start: "top 80%",
-      toggleActions: "play none none none"
-    }
-  });
+    // Scroll-triggerovaná timeline
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section_wrap.gi",
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    });
 
-  // 1. Animace headeru
-  tl.to(headerWords, {
-    y: 0,
-    opacity: 1,
-    duration: 0.35,
-    ease: "power2.out",
-    stagger: 0.1
-  });
+    // 1. Animace headeru
+    tl.to(headerWords, {
+      y: 0,
+      opacity: 1,
+      duration: 0.35,
+      ease: "power2.out",
+      stagger: 0.1
+    });
 
-  // 2. Animace good_idea
-  tl.to(ideaWords, {
-    y: 0,
-    opacity: 1,
-    duration: 0.35,
-    ease: "power2.out",
-    stagger: 0.1
-  }, "+=0.05");
+    // 2. Animace good_idea
+    tl.to(ideaWords, {
+      y: 0,
+      opacity: 1,
+      duration: 0.35,
+      ease: "power2.out",
+      stagger: 0.1
+    }, "+=0.05");
 
-  // 3. Underline animace
-  tl.to(".section_header_underline", {
-    y: 0,
-    opacity: 1,
-    duration: 0.35,
-    ease: "power2.out"
-  }, "+=0.05");
+    // 3. Underline animace
+    tl.to(".section_header_underline", {
+      y: 0,
+      opacity: 1,
+      duration: 0.35,
+      ease: "power2.out"
+    }, "+=0.05");
 
-  // 4. good_idea_para (blur → ostré, opacity)
-  tl.to(".good_idea_para", {
-    opacity: 1,
-    filter: "blur(0px)",
-    duration: 0.35,
-    ease: "power2.out"
-  }, "+=0.05");
+    // 4. good_idea_para (blur → ostré, opacity)
+    tl.to(".good_idea_para", {
+      opacity: 1,
+      filter: "blur(0px)",
+      duration: 0.35,
+      ease: "power2.out"
+    }, "+=0.05");
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(splitTextAndAnimate);
+  } else {
+    window.addEventListener('load', splitTextAndAnimate);
+  }
 
   // Vybere všechny .project_card a vytvoří animaci pro každou zvlášť
   document.querySelectorAll(".project_card").forEach((card) => {
@@ -226,10 +234,8 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
       }
     });
   });
-});
 
-
- // Animace pro .grid_breakout_contain - fade in from bottom 100px
+  // Animace pro .grid_breakout_contain - fade in from bottom 100px
   document.querySelectorAll(".grid_breakout_contain").forEach((el) => {
     gsap.set(el, { y: 100, opacity: 0 });
     const parentWrap = el.closest('.grid_breakout_wrap');
@@ -280,7 +286,6 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
     });
   });
 });
-
 
 // Function to handle scroll
 function handleScroll() {
