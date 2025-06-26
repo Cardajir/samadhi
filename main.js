@@ -284,7 +284,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
       }
     });
   });
-});
 
 // Function to handle scroll
 function handleScroll() {
