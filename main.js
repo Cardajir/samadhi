@@ -121,6 +121,113 @@ document.addEventListener("DOMContentLoaded", function (e) {
   }, 300);
 });
 
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+  const smoother = ScrollSmoother.create({
+    wrapper: ".smooth-wrapper",
+    content: ".page_wrap",
+    smooth: 0,
+    effects: true
+  });
+  ScrollTrigger.refresh();
+
+  // Logo scroll animation
+  window.addEventListener('scroll', handleScroll);
+  // Initial check in case page is loaded scrolled
+  handleScroll();
+
+  // Team CMS items animation on scroll
+  const teamList = document.querySelector('.team_cms_list');
+  if (teamList) {
+    const teamItems = teamList.querySelectorAll('.team_cms_item');
+    gsap.set(teamItems, { x: 100, opacity: 0 });
+
+    gsap.to(teamItems, {
+      x: 0,
+      opacity: 1,
+      duration: 1,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: teamList,
+        start: "top 85%",
+        toggleActions: "play none none none"
+      }
+    });
+  }
+
+  // SplitText: header & idea
+  const headerWords = new SplitText(".good_idea_header", { type: "words" }).words;
+  const ideaWords = new SplitText(".good_idea", { type: "words" }).words;
+
+  // Počáteční stav
+  gsap.set(headerWords, { y: 100, opacity: 0 });
+  gsap.set(ideaWords, { y: 100, opacity: 0 });
+  gsap.set(".section_header_underline", { y: 100, opacity: 0 });
+  gsap.set(".good_idea_para", { opacity: 0, filter: "blur(10px)" });
+
+  // Scroll-triggerovaná timeline
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".section_wrap.gi",
+      start: "top 80%",
+      toggleActions: "play none none none"
+    }
+  });
+
+  // 1. Animace headeru
+  tl.to(headerWords, {
+    y: 0,
+    opacity: 1,
+    duration: 0.35,
+    ease: "power2.out",
+    stagger: 0.1
+  });
+
+  // 2. Animace good_idea
+  tl.to(ideaWords, {
+    y: 0,
+    opacity: 1,
+    duration: 0.35,
+    ease: "power2.out",
+    stagger: 0.1
+  }, "+=0.05");
+
+  // 3. Underline animace
+  tl.to(".section_header_underline", {
+    y: 0,
+    opacity: 1,
+    duration: 0.35,
+    ease: "power2.out"
+  }, "+=0.05");
+
+  // 4. good_idea_para (blur → ostré, opacity)
+  tl.to(".good_idea_para", {
+    opacity: 1,
+    filter: "blur(0px)",
+    duration: 0.35,
+    ease: "power2.out"
+  }, "+=0.05");
+
+  // Vybere všechny .project_card a vytvoří animaci pro každou zvlášť
+  document.querySelectorAll(".project_card").forEach((card) => {
+    // Výchozí stav pomocí GSAP
+    gsap.set(card, { y: 100, opacity: 0 });
+
+    // Animace při 10 % viditelnosti
+    gsap.to(card, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: card,
+        start: "top 85%", // top karty dosáhne 85 % viewportu = 15 % viditelnosti
+        toggleActions: "play none none none"
+      }
+    });
+  });
+});
+
 // Function to handle scroll
 function handleScroll() {
   const logo = document.querySelector('.nav_2_logo_svg-text');
@@ -134,24 +241,6 @@ function handleScroll() {
     gsap.to(logo, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
   }
 }
-
-// Register scroll event once DOM is ready
-document.addEventListener("DOMContentLoaded", function() {
-  // GSAP smooth scrolling
-  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-  ScrollSmoother.create({
-    wrapper: ".smooth-wrapper",
-    content: ".page_wrap",
-    smooth: 0, // seconds to "catch up"
-    effects: true
-  });
-
-  // Logo scroll animation
-  window.addEventListener('scroll', handleScroll);
-  // Initial check in case page is loaded scrolled
-  handleScroll();
-});
-
 
 
 
