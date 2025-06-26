@@ -229,16 +229,17 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 });
 
 
-  // Animace pro .grid_breakout_contain - fade in from bottom 100px
+ // Animace pro .grid_breakout_contain - fade in from bottom 100px
   document.querySelectorAll(".grid_breakout_contain").forEach((el) => {
     gsap.set(el, { y: 100, opacity: 0 });
+    const parentWrap = el.closest('.grid_breakout_wrap');
     gsap.to(el, {
       y: 0,
       opacity: 1,
       duration: 0.35,
       ease: "power2.out",
       scrollTrigger: {
-        trigger: el,
+        trigger: parentWrap || el,
         start: "top 85%",
         toggleActions: "play none none none"
       }
@@ -248,13 +249,14 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
   // Animace pro .grid_breakout_wrap.u-column-custom (fade in zleva)
   document.querySelectorAll(".grid_breakout_wrap.u-column-custom:not(.is-reversed)").forEach((el) => {
     gsap.set(el, { x: -100, opacity: 0 });
+    const parentWrap = el.closest('.grid_breakout_wrap');
     gsap.to(el, {
       x: 0,
       opacity: 1,
       duration: 0.35,
       ease: "power2.out",
       scrollTrigger: {
-        trigger: el,
+        trigger: parentWrap || el,
         start: "top 85%",
         toggleActions: "play none none none"
       }
@@ -264,13 +266,14 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
   // Animace pro .grid_breakout_wrap.u-column-custom.is-reversed (fade in zprava)
   document.querySelectorAll(".grid_breakout_wrap.u-column-custom.is-reversed").forEach((el) => {
     gsap.set(el, { x: 100, opacity: 0 });
+    const parentWrap = el.closest('.grid_breakout_wrap');
     gsap.to(el, {
       x: 0,
       opacity: 1,
       duration: 0.35,
       ease: "power2.out",
       scrollTrigger: {
-        trigger: el,
+        trigger: parentWrap || el,
         start: "top 85%",
         toggleActions: "play none none none"
       }
