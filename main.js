@@ -119,9 +119,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
       resizeCanvasToDiv();
     }
   }, 300);
-});
 
- gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
   const smoother = ScrollSmoother.create({
     wrapper: ".smooth-wrapper",
     content: ".page_wrap",
@@ -300,7 +299,6 @@ function handleScroll() {
     gsap.to(logo, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
   }
 }
-
 
 
 
