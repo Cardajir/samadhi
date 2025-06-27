@@ -119,17 +119,5 @@ document.addEventListener("DOMContentLoaded", function (e) {
       resizeCanvasToDiv();
     }
   }, 300);
-
+});
  
-
-
-
-
-
-
-
-
-
-
-
-
